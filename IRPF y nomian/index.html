@@ -42,11 +42,14 @@
             overflow: hidden;
             transition: max-height 0.4s ease-in-out;
         }
-        .accordion-button.open .accordion-icon {
-            transform: rotate(45deg);
+        .accordion-button .accordion-icon::before {
+            content: '+';
+        }
+        .accordion-button.open .accordion-icon::before {
+            content: '−';
         }
         .accordion-icon {
-             transition: transform 0.3s ease-out;
+            transition: all 0.3s ease-out;
         }
     </style>
 </head>
@@ -73,7 +76,7 @@
                                 <span class="tooltiptext text-left">Es el total de tus ingresos anuales antes de cualquier descuento. Incluye tu sueldo base, pagas extra y otros complementos.</span>
                             </span>
                         </label>
-                        <input type="number" id="salarioBruto" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ej: 25000" value="25000">
+                        <input type="number" id="salarioBruto" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ej: 25000" value="25000" min="0" max="1000000" step="0.01" inputmode="decimal">
                     </div>
 
                     <div>
@@ -92,7 +95,7 @@
                                 <span class="tooltiptext text-left">Número de hijos que conviven contigo y no tienen rentas anuales superiores a 8.000€.</span>
                             </span>
                         </label>
-                        <input type="number" id="hijos" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="0" value="0">
+                        <input type="number" id="hijos" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="0" value="0" min="0" max="20" step="1" inputmode="numeric">
                     </div>
 
                     <div>
@@ -100,6 +103,25 @@
                         <select id="pagas" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                             <option value="12">12 Pagas</option>
                             <option value="14">14 Pagas</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="comunidadAutonoma" class="block text-sm font-medium text-gray-700 mb-1">
+                            Comunidad Autónoma
+                            <span class="tooltip text-indigo-500 cursor-pointer">(?)
+                                <span class="tooltiptext text-left">Tu Comunidad Autónoma tiene tramos de IRPF propios que se suman al tramo estatal. Esto puede variar el resultado significativamente.</span>
+                            </span>
+                        </label>
+                        <select id="comunidadAutonoma" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="estatal">Solo tramos estatales (aproximado)</option>
+                            <option value="madrid">Madrid</option>
+                            <option value="cataluna">Cataluña</option>
+                            <option value="andalucia">Andalucía</option>
+                            <option value="valencia">Comunidad Valenciana</option>
+                            <option value="galicia">Galicia</option>
+                            <option value="paisvasco">País Vasco</option>
+                            <option value="castillaleon">Castilla y León</option>
                         </select>
                     </div>
                      <button onclick="calcularIRPF()" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 transition duration-300 shadow-md">Calcular Ahora</button>
@@ -183,11 +205,11 @@
 
                 <!-- Acordeón 1: Explicación de la Nómina -->
                 <div class="border-b border-gray-200">
-                    <button class="accordion-button w-full flex justify-between items-center text-left py-4 text-lg font-semibold text-gray-800 focus:outline-none">
+                    <button class="accordion-button w-full flex justify-between items-center text-left py-4 text-lg font-semibold text-gray-800 focus:outline-none" aria-expanded="false" aria-controls="accordion-nomina">
                         <span>¿Cómo se lee una nómina de forma sencilla?</span>
-                        <span class="accordion-icon text-indigo-500 text-3xl font-light">+</span>
+                        <span class="accordion-icon text-indigo-500 text-3xl font-light"></span>
                     </button>
-                    <div class="accordion-content">
+                    <div class="accordion-content" id="accordion-nomina" role="region">
                         <div class="pb-4 text-gray-600 space-y-3">
                             <p>Imagina tu nómina como un resumen de cuenta. Tiene dos partes principales:</p>
                             <p><strong class="text-green-600">1. Devengos (Lo que la empresa te paga):</strong> Es la suma de todo el dinero que generas. Aquí encuentras:</p>
@@ -209,11 +231,11 @@
 
                 <!-- Acordeón 2: Explicación del IRPF -->
                 <div class="border-b border-gray-200">
-                    <button class="accordion-button w-full flex justify-between items-center text-left py-4 text-lg font-semibold text-gray-800 focus:outline-none">
+                    <button class="accordion-button w-full flex justify-between items-center text-left py-4 text-lg font-semibold text-gray-800 focus:outline-none" aria-expanded="false" aria-controls="accordion-irpf">
                         <span>¿Por qué mi IRPF cambia cada mes? La regularización</span>
-                        <span class="accordion-icon text-indigo-500 text-3xl font-light">+</span>
+                        <span class="accordion-icon text-indigo-500 text-3xl font-light"></span>
                     </button>
-                    <div class="accordion-content">
+                    <div class="accordion-content" id="accordion-irpf" role="region">
                         <div class="pb-4 text-gray-600 space-y-4">
                            <p>El IRPF es un impuesto <strong>anual</strong>, pero lo pagas a plazos cada mes. El sistema de nóminas debe recalcular constantemente la previsión de lo que ganarás en todo el año para ajustar la retención. Funciona así:</p>
                            
@@ -269,95 +291,173 @@
         const situacionFamiliarSelect = document.getElementById('situacionFamiliar');
         const hijosInput = document.getElementById('hijos');
         const pagasSelect = document.getElementById('pagas');
+        const comunidadAutonomaSelect = document.getElementById('comunidadAutonoma');
 
         const salarioNetoDisplay = document.getElementById('salarioNeto');
         const salarioNetoAnualDisplay = document.getElementById('salarioNetoAnual');
         const retencionPorcentajeDisplay = document.getElementById('retencionPorcentaje');
-        
+
         const resumenBrutoDisplay = document.getElementById('resumenBruto');
         const resumenSSDisplay = document.getElementById('resumenSS');
         const resumenIRPFDisplay = document.getElementById('resumenIRPF');
         const resumenNetoAnualDisplay = document.getElementById('resumenNetoAnual');
 
+        // --- Datos de tramos autonómicos 2024 ---
+        const tramosAutonomicos = {
+            estatal: [],
+            madrid: [
+                { limite: 0, tipo: 0.09 }, { limite: 12450, tipo: 0.115 },
+                { limite: 17707.20, tipo: 0.15 }, { limite: 20200, tipo: 0.184 },
+                { limite: 35200, tipo: 0.234 }, { limite: 60000, tipo: 0.254 }
+            ],
+            cataluna: [
+                { limite: 0, tipo: 0.12 }, { limite: 12450, tipo: 0.14 },
+                { limite: 17707.20, tipo: 0.185 }, { limite: 20200, tipo: 0.212 },
+                { limite: 35200, tipo: 0.237 }, { limite: 60000, tipo: 0.255 },
+                { limite: 120000, tipo: 0.26 }
+            ],
+            andalucia: [
+                { limite: 0, tipo: 0.096 }, { limite: 12450, tipo: 0.12 },
+                { limite: 20200, tipo: 0.15 }, { limite: 35200, tipo: 0.185 },
+                { limite: 60000, tipo: 0.225 }, { limite: 130000, tipo: 0.245 }
+            ],
+            valencia: [
+                { limite: 0, tipo: 0.099 }, { limite: 12450, tipo: 0.12 },
+                { limite: 20200, tipo: 0.14 }, { limite: 35200, tipo: 0.185 },
+                { limite: 60000, tipo: 0.221 }
+            ],
+            galicia: [
+                { limite: 0, tipo: 0.091 }, { limite: 12450, tipo: 0.119 },
+                { limite: 20200, tipo: 0.15 }, { limite: 35200, tipo: 0.185 },
+                { limite: 60000, tipo: 0.225 }
+            ],
+            paisvasco: [
+                { limite: 0, tipo: 0.09 }, { limite: 13500, tipo: 0.12 },
+                { limite: 21000, tipo: 0.15 }, { limite: 37000, tipo: 0.196 },
+                { limite: 53500, tipo: 0.225 }
+            ],
+            castillaleon: [
+                { limite: 0, tipo: 0.095 }, { limite: 12450, tipo: 0.12 },
+                { limite: 20200, tipo: 0.15 }, { limite: 35200, tipo: 0.185 },
+                { limite: 60000, tipo: 0.225 }
+            ]
+        };
+
         // --- Lógica de cálculo ---
         function calcularIRPF() {
-            // 1. OBTENER VALORES DE ENTRADA
-            const salarioBruto = parseFloat(salarioBrutoInput.value) || 0;
-            const situacionFamiliar = situacionFamiliarSelect.value;
-            const numeroHijos = parseInt(hijosInput.value) >= 0 ? parseInt(hijosInput.value) : 0;
-            const numeroPagas = parseInt(pagasSelect.value) || 12;
+            try {
+                // 1. VALIDAR Y OBTENER VALORES DE ENTRADA
+                let salarioBruto = parseFloat(salarioBrutoInput.value) || 0;
 
-            if (salarioBruto <= 0) {
-                actualizarResultados(0, 0, 0, 0, 0, 0);
-                return;
-            }
+                // Validación de salario
+                if (salarioBruto < 0) salarioBruto = 0;
+                if (salarioBruto > 1000000) salarioBruto = 1000000;
+                salarioBruto = Math.round(salarioBruto * 100) / 100;
 
-            // 2. CÁLCULO DE COTIZACIONES A LA SEGURIDAD SOCIAL (SIMPLIFICADO 2024)
-            // Contingencias comunes: 4.8%, Desempleo: 1.55%, Formación: 0.10% = 6.45%
-            const tipoCotizacionSS = 0.0645; 
-            const baseCotizacionMax = 56646; // Tope máximo anual
-            const baseCotizacion = Math.min(salarioBruto, baseCotizacionMax);
-            const cotizacionSS = baseCotizacion * tipoCotizacionSS;
+                const situacionFamiliar = situacionFamiliarSelect.value;
+                let numeroHijos = parseInt(hijosInput.value) || 0;
+                if (numeroHijos < 0) numeroHijos = 0;
+                if (numeroHijos > 20) numeroHijos = 20;
 
-            // 3. BASE IMPONIBLE
-            const gastosDeducibles = 2000;
-            let baseSujetaARetencion = salarioBruto - cotizacionSS - gastosDeducibles;
+                const numeroPagas = parseInt(pagasSelect.value) || 12;
+                const comunidadAutonoma = comunidadAutonomaSelect.value;
 
-            // 4. REDUCCIÓN POR RENDIMIENTOS DEL TRABAJO
-            let reduccionTrabajo = 0;
-            if (baseSujetaARetencion <= 14047.50) {
-                 reduccionTrabajo = 6498;
-            } else if (baseSujetaARetencion < 19747.50) {
-                reduccionTrabajo = 6498 - 1.14 * (baseSujetaARetencion - 14047.50);
-            }
-            
-            let baseImponibleGeneral = baseSujetaARetencion - reduccionTrabajo;
-            if (baseImponibleGeneral < 0) baseImponibleGeneral = 0;
-
-            // 5. MÍNIMO PERSONAL Y FAMILIAR (ESTATAL)
-            let minimoPersonal = 5550;
-            let minimoFamiliar = 0;
-            if (numeroHijos === 1) minimoFamiliar += 2400;
-            if (numeroHijos === 2) minimoFamiliar += 2400 + 2700;
-            if (numeroHijos === 3) minimoFamiliar += 2400 + 2700 + 4000;
-            if (numeroHijos >= 4) minimoFamiliar += 2400 + 2700 + 4000 + 4500;
-            
-            // Mínimo por situación del cónyuge (monoparental no se aplica aquí directamente, es más complejo)
-            // Simplificamos según situación
-            if (situacionFamiliar === '1') { // Cónyuge con rentas bajas
-                // No hay un mínimo directo por esto, afecta a la declaración conjunta que no se simula aquí.
-                // Lo que sí afecta es el tipo de retención, pero se simplifica con los tramos.
-            }
-            const minimoTotal = minimoPersonal + minimoFamiliar;
-
-            // 6. CÁLCULO DE LA CUOTA ÍNTEGRA (Tramos estatales 2024)
-            const calcularCuota = (base) => {
-                let cuota = 0;
-                const tramos = [
-                    { limite: 0, tipo: 0.19 }, { limite: 12450, tipo: 0.24 },
-                    { limite: 20200, tipo: 0.30 }, { limite: 35200, tipo: 0.37 },
-                    { limite: 60000, tipo: 0.45 }, { limite: 300000, tipo: 0.47 }
-                ];
-                let baseRestante = base;
-                for (let i = tramos.length - 1; i >= 0; i--) {
-                    if (baseRestante > tramos[i].limite) {
-                        cuota += (baseRestante - tramos[i].limite) * tramos[i].tipo;
-                        baseRestante = tramos[i].limite;
-                    }
+                if (salarioBruto <= 0) {
+                    actualizarResultados(0, 0, 0, 0, 0, 0);
+                    return;
                 }
-                return cuota;
-            };
-            
-            const cuotaBaseImponible = calcularCuota(baseImponibleGeneral);
-            const cuotaMinimo = calcularCuota(minimoTotal);
 
-            // 7. RESULTADOS FINALES
-            const retencionIRPF = Math.max(0, cuotaBaseImponible - cuotaMinimo);
-            const salarioNetoAnual = salarioBruto - cotizacionSS - retencionIRPF;
-            const salarioNetoMensual = salarioNetoAnual / numeroPagas;
-            const porcentajeRetencion = salarioBruto > 0 ? (retencionIRPF / salarioBruto) * 100 : 0;
-            
-            actualizarResultados(salarioNetoMensual, salarioNetoAnual, porcentajeRetencion, salarioBruto, cotizacionSS, retencionIRPF);
+                // 2. CÁLCULO DE COTIZACIONES A LA SEGURIDAD SOCIAL 2024
+                // Contingencias comunes: 4.7%, Desempleo: 1.55%, Formación: 0.10% = 6.35%
+                const tipoCotizacionSS = 0.0635;
+                const baseCotizacionMax = 56646; // Tope máximo anual 2024
+                const baseCotizacionMin = 15876; // Base mínima anual 2024
+                let baseCotizacion = salarioBruto;
+                if (baseCotizacion < baseCotizacionMin) baseCotizacion = baseCotizacionMin;
+                if (baseCotizacion > baseCotizacionMax) baseCotizacion = baseCotizacionMax;
+                const cotizacionSS = baseCotizacion * tipoCotizacionSS;
+
+                // 3. GASTOS DEDUCIBLES POR OBTENCIÓN DE RENDIMIENTOS DEL TRABAJO (2024)
+                const rendimientoNeto = salarioBruto - cotizacionSS;
+                let gastosDeducibles = 0;
+
+                if (rendimientoNeto <= 14047.50) {
+                    gastosDeducibles = 5565;
+                } else if (rendimientoNeto < 19747.50) {
+                    // Reducción gradual
+                    gastosDeducibles = 5565 - ((rendimientoNeto - 14047.50) * 1.5);
+                    if (gastosDeducibles < 0) gastosDeducibles = 0;
+                } else {
+                    gastosDeducibles = 0;
+                }
+
+                // 4. BASE SUJETA A RETENCIÓN
+                let baseSujetaARetencion = rendimientoNeto - gastosDeducibles;
+                if (baseSujetaARetencion < 0) baseSujetaARetencion = 0;
+
+                // 5. MÍNIMO PERSONAL Y FAMILIAR (2024)
+                let minimoPersonal = 5550;
+
+                // Mínimo por descendientes
+                let minimoFamiliar = 0;
+                if (numeroHijos >= 1) minimoFamiliar += 2400;
+                if (numeroHijos >= 2) minimoFamiliar += 2700;
+                if (numeroHijos >= 3) minimoFamiliar += 4000;
+                if (numeroHijos >= 4) minimoFamiliar += 4500 * (numeroHijos - 3);
+
+                const minimoTotal = minimoPersonal + minimoFamiliar;
+
+                // 6. CÁLCULO DE LA CUOTA ÍNTEGRA
+                const calcularCuota = (base, comunidad) => {
+                    // Tramos estatales (50%)
+                    const tramosEstatal = [
+                        { limite: 0, tipo: 0.095 }, { limite: 12450, tipo: 0.12 },
+                        { limite: 20200, tipo: 0.15 }, { limite: 35200, tipo: 0.185 },
+                        { limite: 60000, tipo: 0.225 }, { limite: 300000, tipo: 0.235 }
+                    ];
+
+                    let cuotaEstatal = 0;
+                    let baseRestante = base;
+
+                    for (let i = tramosEstatal.length - 1; i >= 0; i--) {
+                        if (baseRestante > tramosEstatal[i].limite) {
+                            cuotaEstatal += (baseRestante - tramosEstatal[i].limite) * tramosEstatal[i].tipo;
+                            baseRestante = tramosEstatal[i].limite;
+                        }
+                    }
+
+                    // Tramos autonómicos (50%)
+                    let cuotaAutonomica = 0;
+                    const tramosAuto = tramosAutonomicos[comunidad] || [];
+                    baseRestante = base;
+
+                    for (let i = tramosAuto.length - 1; i >= 0; i--) {
+                        if (baseRestante > tramosAuto[i].limite) {
+                            cuotaAutonomica += (baseRestante - tramosAuto[i].limite) * tramosAuto[i].tipo;
+                            baseRestante = tramosAuto[i].limite;
+                        }
+                    }
+
+                    return cuotaEstatal + cuotaAutonomica;
+                };
+
+                const cuotaBaseImponible = calcularCuota(baseSujetaARetencion, comunidadAutonoma);
+                const cuotaMinimo = calcularCuota(minimoTotal, comunidadAutonoma);
+
+                // 7. RESULTADOS FINALES
+                let retencionIRPF = cuotaBaseImponible - cuotaMinimo;
+                if (retencionIRPF < 0) retencionIRPF = 0;
+
+                const salarioNetoAnual = salarioBruto - cotizacionSS - retencionIRPF;
+                const salarioNetoMensual = salarioNetoAnual / numeroPagas;
+                const porcentajeRetencion = salarioBruto > 0 ? (retencionIRPF / salarioBruto) * 100 : 0;
+
+                actualizarResultados(salarioNetoMensual, salarioNetoAnual, porcentajeRetencion, salarioBruto, cotizacionSS, retencionIRPF);
+            } catch (error) {
+                console.error('Error en el cálculo de IRPF:', error);
+                actualizarResultados(0, 0, 0, 0, 0, 0);
+                alert('Ha ocurrido un error en el cálculo. Por favor, verifica los datos introducidos.');
+            }
         }
 
         function actualizarResultados(netoMes, netoAnual, porcRet, bruto, ss, irpf) {
@@ -373,18 +473,22 @@
             resumenNetoAnualDisplay.textContent = formatCurrency(netoAnual);
         }
 
-        // --- Lógica del Acordeón (CORREGIDA) ---
+        // --- Lógica del Acordeón (MEJORADA) ---
         document.querySelectorAll('.accordion-button').forEach(button => {
             button.addEventListener('click', () => {
                 const accordionContent = button.nextElementSibling;
-                
+                const isOpen = button.classList.contains('open');
+
                 button.classList.toggle('open');
 
-                if (button.classList.contains('open')) {
-                    // Se establece el max-height al scrollHeight del contenido para una transición suave.
+                if (!isOpen) {
+                    // Abrir acordeón
                     accordionContent.style.maxHeight = accordionContent.scrollHeight + 'px';
+                    button.setAttribute('aria-expanded', 'true');
                 } else {
+                    // Cerrar acordeón
                     accordionContent.style.maxHeight = '0';
+                    button.setAttribute('aria-expanded', 'false');
                 }
             });
         });
@@ -394,6 +498,7 @@
         situacionFamiliarSelect.addEventListener('change', calcularIRPF);
         hijosInput.addEventListener('input', calcularIRPF);
         pagasSelect.addEventListener('change', calcularIRPF);
+        comunidadAutonomaSelect.addEventListener('change', calcularIRPF);
 
         // --- Cálculo inicial al cargar la página ---
         window.addEventListener('load', calcularIRPF);
