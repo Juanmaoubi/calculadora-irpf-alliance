@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de IRPF y Salario Neto con IA</title>
+    <title>Calculadora de IRPF y Salario Neto</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,6 +11,7 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            scroll-behavior: smooth;
         }
         .tooltip {
             position: relative;
@@ -42,15 +43,15 @@
             overflow: hidden;
             transition: max-height 0.4s ease-in-out;
         }
-        .accordion-button .accordion-icon::before {
-            content: '+';
-        }
-        .accordion-button.open .accordion-icon::before {
-            content: '−';
+        .accordion-button.open .accordion-icon {
+            transform: rotate(45deg);
         }
         .accordion-icon {
-            transition: all 0.3s ease-out;
+            transition: transform 0.3s ease-out;
         }
+        /* Nomina styles */
+        .nomina-header { background-color: #eef2ff; }
+        .nomina-section-title { background-color: #e0e7ff; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800">
@@ -58,451 +59,458 @@
     <div class="container mx-auto p-4 md:p-8 max-w-4xl">
 
         <header class="text-center mb-8">
-            <h1 class="text-4xl font-bold text-indigo-600">Calculadora de IRPF y Salario Neto</h1>
-            <p class="mt-2 text-lg text-gray-600">Calcula tu nómina, ¡aproximada! Alliance no se queda con tu IRPF.</p>
+            <h1 class="text-4xl font-bold text-indigo-600">Calcula tu nómina, entiende tu IRPF y consulta las dudas frecuentes</h1>
+            <p class="mt-2 text-lg text-gray-600">Utiliza esta aplicación para sacarte dudas, pero recuerda que tienes a RRHH para consultar lo que quieras!</p>
         </header>
 
-        <div class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Columna de Entradas -->
-                <div class="space-y-6">
-                    <h2 class="text-2xl font-semibold text-gray-700 border-b pb-2">Introduce tus datos</h2>
-                    
-                    <div>
-                        <label for="salarioBruto" class="block text-sm font-medium text-gray-700 mb-1">
-                            Salario Bruto Anual (€)
-                             <span class="tooltip text-indigo-500 cursor-pointer">(?)
-                                <span class="tooltiptext text-left">Es el total de tus ingresos anuales antes de cualquier descuento. Incluye tu sueldo base, pagas extra y otros complementos.</span>
-                            </span>
-                        </label>
-                        <input type="number" id="salarioBruto" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ej: 25000" value="25000" min="0" max="1000000" step="0.01" inputmode="decimal">
+        <!-- SECCIÓN 1: DUDAS SALARIO E IRPF -->
+        <div id="dudas-salario-irpf" class="mt-10 bg-white rounded-2xl shadow-lg">
+             <button class="accordion-button w-full flex justify-between items-center text-left p-6 md:p-8 text-xl font-semibold text-gray-700 focus:outline-none">
+                <span>Dudas y consultas sobre tu salario e IRPF</span>
+                <span class="accordion-icon text-indigo-500 text-3xl font-light">+</span>
+            </button>
+            <div class="accordion-content">
+                <div class="px-6 md:px-8 pb-6 md:pb-8">
+                    <div class="space-y-6 pt-4 border-t">
+                        <div class="p-4 rounded-lg bg-gray-50 border"><h3 class="font-semibold text-lg text-indigo-600 mb-1">Tu dinero va a Hacienda...</h3><p class="text-gray-600">La empresa actúa como una recaudadora para Hacienda del Impuesto sobre la Renta de las Personas Físicas (IRPF). La ley obliga a todas las empresas a retener una parte de tu sueldo y a ingresársela al Estado cada mes en tu nombre para financiar los servicios públicos como hospitales, colegios, carreteras o seguridad.</p></div>
+                        <div class="p-4 rounded-lg bg-gray-50 border"><h3 class="font-semibold text-lg text-indigo-600 mb-1">... y a la Seguridad Social</h3><p class="text-gray-600">Tu aportación para la jubilación, el desempleo (paro) y la formación. Es un porcentaje fijo del <strong>6,45%</strong> sobre tu base de cotización.</p></div>
+                        <div class="p-4 rounded-lg bg-gray-50 border"><h3 class="font-semibold text-lg text-indigo-600 mb-1">¿Cuánto IRPF me tienen que retener?</h3><div class="text-gray-600 space-y-3"><p>El importe de la retención depende del nivel de ingresos brutos. Estos son los tramos generales para 2025:</p><table class="w-full text-left border-collapse"><thead><tr><th class="py-2 px-4 bg-gray-100 border-b font-semibold">Renta 2025</th><th class="py-2 px-4 bg-gray-100 border-b font-semibold">Tipo de retención</th></tr></thead><tbody><tr class="border-b"><td class="py-2 px-4">hasta 12.450€</td><td class="py-2 px-4">19%</td></tr><tr class="border-b"><td class="py-2 px-4">de 12.450€ a 20.200€</td><td class="py-2 px-4">24%</td></tr><tr class="border-b"><td class="py-2 px-4">de 20.200€ a 35.200€</td><td class="py-2 px-4">30%</td></tr><tr class="border-b"><td class="py-2 px-4">de 35.200€ a 60.000€</td><td class="py-2 px-4">37%</td></tr><tr class="border-b"><td class="py-2 px-4">de 60.000€ a 300.000€</td><td class="py-2 px-4">45%</td></tr><tr><td class="py-2 px-4">más de 300.000€</td><td class="py-2 px-4">47%</td></tr></tbody></table></div></div>
+                        <div class="p-4 rounded-lg bg-gray-50 border"><h3 class="font-semibold text-lg text-indigo-600 mb-1">¿Por qué mi IRPF cambia? Ejemplo práctico</h3><div class="text-gray-600 space-y-3"><p><strong>Salario enero bruto: 1000€</strong><br>El sistema detecta que tendrás ingresos durante todo el año de 12.000€ y hace el cálculo de IRPF en base a eso.</p><p><strong>Salario febrero bruto: 2000€</strong><br>El sistema suma los 1000€ de enero y los 2000€ de febrero (3000€) y los divide por esos dos meses (1500€). Entonces entiende que tus ingresos mensuales serán de 1.500€ y lo multiplica por 12 meses, es decir, 18.000€ anual. Entonces, de los 2000€ retiene lo que corresponde, pero debe retener más de los 1000€ de enero que no lo hizo.</p><p><strong>Salario de marzo bruto: 2500€</strong><br>Nuevamente suma los 1000€ de enero, los 2000€ de febrero y los 2500€ de marzo (5.500€) y divide esa cantidad por 3 (1.833,33€). Multiplica por 12 meses y detecta que ganarías 21.999,99€ anual. Y vuelve a hacer lo mismo, calcula cuánto IRPF tuvo que haber retenido en meses anteriores, y lo retiene en el mes actual.</p><p class="font-semibold">Y así mes a mes. Cada mes, el sistema detecta cuánto se te ha retenido, cuánto debería haberse retenido hasta el momento y realiza el ajuste correspondiente.</p><div class="p-4 bg-green-50 rounded-lg border border-green-200 mt-4"><p class="font-semibold">¿Y si pido un porcentaje diferente al que existe en nómina?</p><p>Puedes solicitar un porcentaje de IRPF superior al que te corresponde por ley (por ejemplo, un 16% si te sale un 10%). La empresa aplicará ese 16%. Sin embargo, nunca podrá retenerte menos de lo que marca la ley, aunque lo pidas. NO es un capricho, así lo establece la ley.</p></div></div></div>
+                        <div class="p-4 rounded-lg bg-gray-50 border"><h3 class="font-semibold text-lg text-indigo-600 mb-1">¿Por qué mi retención puede ser del 0%?</h3><div class="text-gray-600 space-y-2"><p>La ley establece un mínimo de ingresos para que la empresa esté obligada a retener. Para 2025, este mínimo es de **15.000€ brutos anuales** para un trabajador con un solo pagador. Si tu previsión de ingresos anuales no alcanza esta cifra, tu retención es del 0%.</p><p class="p-3 bg-yellow-50 border-l-4 border-yellow-400"><strong>¡Cuidado con tener dos pagadores!</strong> Si tienes más de un trabajo y el segundo pagador te abona más de 1.500€ al año, es muy probable que al hacer la Declaración de la Renta te salga a pagar, aunque no te hayan retenido. Para evitar sorpresas, puedes solicitar voluntariamente a la empresa que te retenga un 2% o más.</p></div></div>
+                        <div class="p-4 rounded-lg bg-gray-50 border"><h3 class="font-semibold text-lg text-indigo-600 mb-1">Existe un sitio Oficial</h3><div class="text-gray-600"><p>Puedes visitar el sitio oficial de la Agencia Tributaria para hacer el cálculo exacto: <a href="https://www2.agenciatributaria.gob.es/wlpl/PRET-R200/R250/index.zul" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:underline">https://www2.agenciatributaria.gob.es/wlpl/PRET-R200/R250/index.zul</a></p></div></div>
                     </div>
-
-                    <div>
-                        <label for="situacionFamiliar" class="block text-sm font-medium text-gray-700 mb-1">Situación Familiar</label>
-                        <select id="situacionFamiliar" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                            <option value="3">Soltero/a, viudo/a, divorciado/a o separado/a legalmente</option>
-                            <option value="2">Casado/a y cónyuge con rentas superiores a 1.500€</option>
-                            <option value="1">Casado/a y cónyuge sin rentas o inferiores a 1.500€</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label for="hijos" class="block text-sm font-medium text-gray-700 mb-1">
-                            Hijos menores de 25 años a cargo
-                            <span class="tooltip text-indigo-500 cursor-pointer">(?)
-                                <span class="tooltiptext text-left">Número de hijos que conviven contigo y no tienen rentas anuales superiores a 8.000€.</span>
-                            </span>
-                        </label>
-                        <input type="number" id="hijos" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="0" value="0" min="0" max="20" step="1" inputmode="numeric">
-                    </div>
-
-                    <div>
-                        <label for="pagas" class="block text-sm font-medium text-gray-700 mb-1">Número de Pagas</label>
-                        <select id="pagas" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                            <option value="12">12 Pagas</option>
-                            <option value="14">14 Pagas</option>
-                        </select>
-                    </div>
-
-                    <div>
-                        <label for="comunidadAutonoma" class="block text-sm font-medium text-gray-700 mb-1">
-                            Comunidad Autónoma
-                            <span class="tooltip text-indigo-500 cursor-pointer">(?)
-                                <span class="tooltiptext text-left">Tu Comunidad Autónoma tiene tramos de IRPF propios que se suman al tramo estatal. Esto puede variar el resultado significativamente.</span>
-                            </span>
-                        </label>
-                        <select id="comunidadAutonoma" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                            <option value="estatal">Solo tramos estatales (aproximado)</option>
-                            <option value="madrid">Madrid</option>
-                            <option value="cataluna">Cataluña</option>
-                            <option value="andalucia">Andalucía</option>
-                            <option value="valencia">Comunidad Valenciana</option>
-                            <option value="galicia">Galicia</option>
-                            <option value="paisvasco">País Vasco</option>
-                            <option value="castillaleon">Castilla y León</option>
-                        </select>
-                    </div>
-                     <button onclick="calcularIRPF()" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 transition duration-300 shadow-md">Calcular Ahora</button>
-                </div>
-
-                <!-- Columna de Resultados -->
-                <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-200">
-                    <h2 class="text-2xl font-semibold text-indigo-800 border-b border-indigo-200 pb-2 mb-4">Tu resultado estimado</h2>
-                    
-                    <div class="space-y-3">
-                        <div class="flex justify-between items-center">
-                            <span class="font-medium text-gray-600">Salario Neto Mensual</span>
-                            <span id="salarioNeto" class="text-2xl font-bold text-indigo-600">0,00 €</span>
-                        </div>
-                         <div class="flex justify-between items-center">
-                            <span class="font-medium text-gray-600">Salario Neto Anual</span>
-                            <span id="salarioNetoAnual" class="text-lg font-semibold text-gray-700">0,00 €</span>
-                        </div>
-                        <div class="flex justify-between items-center pt-2 border-t">
-                            <span class="font-medium text-gray-600">Retención de IRPF</span>
-                            <span id="retencionPorcentaje" class="text-lg font-semibold text-red-600">0,00 %</span>
-                        </div>
-                    </div>
-
-                    <div class="mt-6 bg-white p-4 rounded-lg shadow-sm">
-                         <h3 class="font-semibold text-lg mb-2">Desglose Anual</h3>
-                         <div id="desglose-container" class="space-y-2 text-sm">
-                             <div class="flex justify-between">
-                                 <span>(+) Salario Bruto:</span>
-                                 <span id="resumenBruto" class="font-medium">0,00 €</span>
-                             </div>
-                              <div class="flex justify-between">
-                                 <span>(-) Cotización S. Social:</span>
-                                 <span id="resumenSS" class="font-medium text-red-500">0,00 €</span>
-                             </div>
-                             <div class="flex justify-between">
-                                 <span>(-) Retención IRPF:</span>
-                                 <span id="resumenIRPF" class="font-medium text-red-500">0,00 €</span>
-                             </div>
-                             <div class="flex justify-between border-t mt-2 pt-2 font-bold">
-                                 <span>(=) Salario Neto Anual:</span>
-                                 <span id="resumenNetoAnual" class="text-green-600">0,00 €</span>
-                             </div>
-                         </div>
-                    </div>
-                </div>
-            </div>
-             <!-- Disclaimer -->
-            <div class="mt-8 text-center text-xs text-gray-500 bg-gray-100 p-3 rounded-lg">
-                <p><span class="font-bold">AVISO IMPORTANTE:</span> Esta es una calculadora simplificada con fines orientativos. Utiliza los tramos estatales del IRPF, que pueden variar según tu Comunidad Autónoma. El cálculo real de la Agencia Tributaria puede diferir. Esto no constituye asesoramiento fiscal.</p>
-            </div>
-        </div>
-        
-        <!-- Sección "¿A dónde va mi dinero?" RESTAURADA -->
-        <div class="mt-10 bg-white p-6 md:p-8 rounded-2xl shadow-lg">
-            <h2 class="text-2xl font-semibold text-gray-700 mb-4">¿A dónde va mi dinero?</h2>
-            <div class="space-y-4 text-gray-600">
-                <div>
-                    <h3 class="font-semibold text-lg text-indigo-600 mb-1">Alliance NO se queda con tu dinero</h3>
-                    <p>Es el mito más extendido. La empresa actúa únicamente como una <span class="font-bold">recaudadora para Hacienda</span>. La ley le obliga a retener una parte de tu sueldo (el IRPF) y a ingresársela al Estado cada mes en tu nombre. Es una mensajera, no la destinataria.</p>
-                </div>
-                <div>
-                    <h3 class="font-semibold text-lg text-indigo-600 mb-1">Tu salario mensual puede variar y eso cambia todo tu IRPF</h3>
-                    <p>Esto es un aproximado. Tu IRPF varía según lo que ganes en bruto mensualmente. Ten en cuenta que si tienes variaciones de conceptos, el salario bruto anual será mayor (o menor) al firmado.</p>
-                </div>
-                <div>
-                    <h3 class="font-semibold text-lg text-indigo-600 mb-1">El IRPF financia lo que es de TODOS</h3>
-                    <p>Ese dinero que se retiene sirve para pagar los servicios públicos que disfrutamos como sociedad: <span class="font-bold">hospitales, colegios, carreteras, seguridad, pensiones,</span> etc. Es una contribución solidaria en función de los ingresos de cada uno.</p>
-                </div>                    
-                <div>
-                    <h3 class="font-semibold text-lg text-indigo-600 mb-1">Existe un sitio Oficial</h3>
-                    <p>Puedes visitar el sitio oficial de la Agencia Tributaria para hacer el cálculo exacto: <a href="https://www2.agenciatributaria.gob.es/wlpl/PRET-R200/R250/index.zul" target="_blank" class="text-blue-600 hover:underline">https://www2.agenciatributaria.gob.es/wlpl/PRET-R200/R250/index.zul</a></p>
                 </div>
             </div>
         </div>
-        
-        <!-- Sección Explicativa con Acordeón -->
-        <div class="mt-10 bg-white p-6 md:p-8 rounded-2xl shadow-lg">
-            <h2 class="text-2xl font-semibold text-gray-700 mb-4">¿Tienes más dudas? Te las resolvemos</h2>
-            <div class="space-y-2">
 
-                <!-- Acordeón 1: Explicación de la Nómina -->
-                <div class="border-b border-gray-200">
-                    <button class="accordion-button w-full flex justify-between items-center text-left py-4 text-lg font-semibold text-gray-800 focus:outline-none" aria-expanded="false" aria-controls="accordion-nomina">
-                        <span>¿Cómo se lee una nómina de forma sencilla?</span>
-                        <span class="accordion-icon text-indigo-500 text-3xl font-light"></span>
-                    </button>
-                    <div class="accordion-content" id="accordion-nomina" role="region">
-                        <div class="pb-4 text-gray-600 space-y-3">
-                            <p>Imagina tu nómina como un resumen de cuenta. Tiene dos partes principales:</p>
-                            <p><strong class="text-green-600">1. Devengos (Lo que la empresa te paga):</strong> Es la suma de todo el dinero que generas. Aquí encuentras:</p>
-                            <ul class="list-disc list-inside pl-4 space-y-1">
-                                <li><strong>Salario Base:</strong> Tu sueldo fijo por convenio.</li>
-                                <li><strong>Complementos:</strong> Pagos extra por antigüedad, nocturnidad, objetivos, etc.</li>
-                                <li><strong>Pagas Extra:</strong> Las recibimos mes a mes prorrateadas, aquí aparecen como PP Extra.</li>
-                            </ul>
-                            <p><strong class="text-red-600">2. Deducciones (Lo que se te descuenta):</strong> Es el dinero que se resta de los devengos para pagar impuestos y cotizaciones. Lo más importante es:</p>
-                             <ul class="list-disc list-inside pl-4 space-y-1">
-                                <li><strong>Cotización a la Seguridad Social:</strong> Tu aportación para la jubilación, el desempleo (paro) y la formación. Es un porcentaje fijo sobre tu base de cotización.</li>
-                                <li><strong>Retención de IRPF:</strong> Un adelanto que tu empresa ingresa a Hacienda en tu nombre. Este porcentaje varía.</li>
-                                <li><strong>Otras deducciones:</strong> Aquí van otros conceptos como anticipos, o diferencia nómina anterior.</li>
-                            </ul>
-                            <p class="font-bold pt-2">El resultado final, <strong class="text-indigo-600">Salario Neto (Líquido a percibir)</strong>, es lo que llega a tu cuenta bancaria: <span class="font-mono bg-gray-100 px-2 py-1 rounded">Devengos - Deducciones</span>.</p>
+        <!-- SECCIÓN 2: ENTIENDE TU NÓMINA -->
+        <div id="entiende-nomina" class="mt-10 bg-white rounded-2xl shadow-lg">
+             <button class="accordion-button w-full flex justify-between items-center text-left p-6 md:p-8 text-xl font-semibold text-gray-700 focus:outline-none">
+                <span>Entiende tu nómina y no te quedes con dudas</span>
+                <span class="accordion-icon text-indigo-500 text-3xl font-light">+</span>
+            </button>
+            <div class="accordion-content">
+                <div class="px-6 md:px-8 pb-6 md:pb-8">
+                    <div class="space-y-6 pt-4 border-t">
+                        <!-- Párrafo de explicación añadido -->
+                        <p class="p-4 bg-blue-50 border-l-4 border-blue-400 rounded-lg">
+                            Para los cálculos que no corresponden a un mes completo, como finiquitos o vacaciones, se utiliza el criterio del año comercial, que consta de 360 días (12 meses de 30 días). En el caso de bajas médicas, la base de cotización diaria se ajusta según el número real de días del mes (28, 29, 30 o 31), ya que la remuneración durante la baja se calcula según los días efectivamente trabajados y los días no trabajados.
+                        </p>
+                        <div>
+                            <h3 class="font-semibold text-xl text-indigo-700 mb-3">Ejemplo de una Nómina</h3>
+                            <div class="border rounded-lg overflow-hidden shadow-sm">
+                                <div class="nomina-header p-4 grid grid-cols-2 gap-4">
+                                    <div><p class="font-bold">EMPRESA</p><p class="text-sm">ALLIANCE</p><p class="text-sm">CIF: B12345678</p></div>
+                                    <div><p class="font-bold">TRABAJADOR/A</p><p class="text-sm">Juan Manuel O.</p><p class="text-sm">NIF: 12345678A</p></div>
+                                </div>
+                                <div class="p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <p class="nomina-section-title font-bold p-2 rounded-t-lg">I. DEVENGOS (Ingresos)</p>
+                                        <div class="border-l border-r border-b rounded-b-lg p-2 space-y-1">
+                                            <div class="flex justify-between"><span class="text-sm">Salario Base</span><span>1.200,00 €</span></div>
+                                            <div class="flex justify-between"><span class="text-sm">PP Pagas Extras</span><span>200,00 €</span></div>
+                                            <div class="flex justify-between font-bold pt-2 border-t"><span class="text-sm">A. TOTAL DEVENGADO</span><span>1.400,00 €</span></div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <p class="nomina-section-title font-bold p-2 rounded-t-lg">II. DEDUCCIONES (Descuentos)</p>
+                                        <div class="border-l border-r border-b rounded-b-lg p-2 space-y-1">
+                                            <div class="flex justify-between"><span class="text-sm">Contingencias Comunes (4,80%)</span><span>- 67,20 €</span></div>
+                                            <div class="flex justify-between"><span class="text-sm">Desempleo (1,55%)</span><span>- 21,70 €</span></div>
+                                            <div class="flex justify-between"><span class="text-sm">Formación Profesional (0,10%)</span><span>- 1,40 €</span></div>
+                                            <div class="flex justify-between text-red-600"><span class="text-sm">Retención IRPF (8,00%)</span><span>- 112,00 €</span></div>
+                                            <div class="flex justify-between font-bold pt-2 border-t"><span class="text-sm">B. TOTAL A DEDUCIR</span><span>- 202,30 €</span></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-100 p-4">
+                                    <p class="text-lg font-bold text-center">LÍQUIDO A PERCIBIR (A - B) = <span class="text-green-600">1.197,70 €</span></p>
+                                    <p class="text-xs text-center text-gray-500 mt-2">Base de Cotización (Base Reguladora): 1.400,00 €</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Ejemplo práctico añadido -->
+                        <div class="p-4 bg-gray-50 rounded-lg border">
+                            <h3 class="font-semibold text-lg text-indigo-600 mb-2">Ejemplo práctico de cálculo de salarios de finiquitos o bajas médicas</h3>
+                            <div class="text-gray-600 space-y-3">
+                                <p><strong>Salario bruto anual:</strong> 18.000 €</p>
+                                <p><strong>Nómina mensual:</strong> 18.000 ÷ 12 = 1.500 € (constante cada mes, aunque febrero tenga 28 días o agosto 31)</p>
+                                <div class="mt-4">
+                                    <p><span class="font-semibold">1️⃣ Vacaciones o finiquitos (no mes completo):</span></p>
+                                    <p><strong>Salario diario según año comercial:</strong> 18.000 ÷ 360 = 50 €/día</p>
+                                    <p>Si el empleado toma 4 días de vacaciones: 4 × 50 € = 200 €</p>
+                                </div>
+                                <div class="mt-4">
+                                    <p><span class="font-semibold">2️⃣ Baja médica (ajustada a días reales del mes):</span></p>
+                                    <p>Supongamos que en febrero (28 días) el empleado está de baja 10 días</p>
+                                    <p><strong>Salario diario real:</strong> 18.000 ÷ 365 ≈ 49,32 €/día</p>
+                                    <p><strong>Pago por los 10 días de baja:</strong> 10 × 49,32 ≈ 493,20 €</p>
+                                </div>
+                                <div class="p-3 bg-indigo-50 border-l-4 border-indigo-400 rounded-lg mt-4">
+                                    <p class="font-semibold">💡 Resumen práctico:</p>
+                                    <ul class="list-disc list-inside space-y-1 mt-1 text-sm">
+                                        <li><strong>Nómina mensual</strong> → siempre igual (1.500 €)</li>
+                                        <li><strong>Vacaciones/finiquitos</strong> → se usa año comercial 360 días (50 €/día)</li>
+                                        <li><strong>Baja médica</strong> → se ajusta al mes real (49,32 €/día en febrero)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="font-semibold text-xl text-indigo-700 mt-6 mb-3">¿Qué significa cada concepto?</h3>
+                            <div class="space-y-4">
+                                <p><strong>Salario Base:</strong> Es tu sueldo fijo mensual, establecido por el convenio colectivo de tu sector. Se calcula en base a tu salario anual y el número de pagas.</p>
+                                <p><strong>P.P. Pagas Extras:</strong> Es el "prorrateo" de las pagas extras. En lugar de recibirlas todas juntas en verano y Navidad, se dividen y se abona una pequeña parte cada mes para que tus ingresos mensuales sean más estables.</p>
+                                <p class="p-3 bg-blue-50 border-l-4 border-blue-400"><strong>Base de Cotización (Base Reguladora):</strong> La base de cotización es la remuneración mensual bruta que recibe un trabajador, incluyendo pagas extra prorrateadas y horas extra, y sirve como base para calcular las aportaciones a la Seguridad Social tanto por parte del trabajador como de la empresa.</p>
+                                <div class="p-4 bg-gray-50 rounded-lg border">
+                                    <p class="font-semibold">Otros conceptos que pueden aparecer en tu nómina:</p>
+                                    <p class="text-sm text-gray-600 mt-2">Luego hay varios conceptos que aparecerán en tu nómina, según convenio, según servicio. Si tienes duda de su significado, no dudes en consultar con RRHH desde el portal de incidencias.</p>
+                                    <h4 class="font-semibold mt-3">Algunos ejemplos son:</h4>
+                                    <ul class="list-disc list-inside text-sm mt-2 grid grid-cols-2 gap-x-4">
+                                        <li>Anticipo <span class="text-xs">(Máx. 300€ hasta el día 10)</span></li><li>Dias a descontar</li><li>Carencia de incentivo</li><li>Complemento mejora productividad</li><li>Complemento enf/acc</li><li>Importe ilt accidente</li><li>Dias vac laborales disfrutadas</li><li>Dias it no cobrados</li><li>Plus convenio (Valladolid)</li><li>Dietas</li><li>Importe embargo</li><li>Importe enfermedad 60%</li><li>Importe enfermedad 75%</li><li>Plus nocturnidad</li><li>Dia noche</li><li>Prima 1/2/3</li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <!-- Acordeón 2: Explicación del IRPF -->
-                <div class="border-b border-gray-200">
-                    <button class="accordion-button w-full flex justify-between items-center text-left py-4 text-lg font-semibold text-gray-800 focus:outline-none" aria-expanded="false" aria-controls="accordion-irpf">
-                        <span>¿Por qué mi IRPF cambia cada mes? La regularización</span>
-                        <span class="accordion-icon text-indigo-500 text-3xl font-light"></span>
-                    </button>
-                    <div class="accordion-content" id="accordion-irpf" role="region">
-                        <div class="pb-4 text-gray-600 space-y-4">
-                           <p>El IRPF es un impuesto <strong>anual</strong>, pero lo pagas a plazos cada mes. El sistema de nóminas debe recalcular constantemente la previsión de lo que ganarás en todo el año para ajustar la retención. Funciona así:</p>
-                           
-                           <div class="p-4 bg-gray-50 rounded-lg border">
-                               <p class="font-semibold">Idea Clave:</p>
-                               <p>Cada mes, el sistema mira tus <strong>ingresos totales hasta la fecha</strong>, calcula una nueva <strong>previsión anual</strong> y ajusta la retención para que, a final de año, hayas pagado lo que te corresponde o lo más cerca de lo que corresponde. Ten en cuenta que siempre puede haber diferencias.</p>
-                           </div>
-
-                           <p>Veámoslo con tu ejemplo:</p>
-                           <ul class="space-y-3">
-                               <li><strong class="text-indigo-700">Mes 1 (Enero):</strong> Ganas 1.000€.
-                                   <ul class="list-disc list-inside pl-5 text-sm">
-                                       <li><strong>Previsión:</strong> El sistema estima que ganarás 1.000€ x 12 = 12.000€ al año.</li>
-                                       <li><strong>Acción:</strong> Calcula el IRPF para 12.000€ y te retiene la parte de este mes.</li>
-                                   </ul>
-                               </li>
-                               <li><strong class="text-indigo-700">Mes 2 (Febrero):</strong> Ganas 2.000€ (por un bonus, por ejemplo).
-                                   <ul class="list-disc list-inside pl-5 text-sm">
-                                       <li><strong>Previsión:</strong> Llevas ganados 3.000€ en 2 meses. El promedio es 1.500€/mes. La nueva previsión anual es 1.500€ x 12 = 18.000€.</li>
-                                       <li><strong>Acción:</strong> El sistema recalcula el IRPF total para 18.000€. Se da cuenta de que en enero te retuvo de menos (porque pensaba que ganarías menos). En la nómina de febrero, te retiene lo que corresponde a este mes <strong>más una parte extra</strong> para compensar lo que faltó en enero.</li>
-                                   </ul>
-                               </li>
-                               <li><strong class="text-indigo-700">Mes 3 (Marzo):</strong> Ganas 2.500€.
-                                    <ul class="list-disc list-inside pl-5 text-sm">
-                                       <li><strong>Previsión:</strong> Llevas 5.500€ en 3 meses. Promedio: 1.833€/mes. Nueva previsión anual: ~22.000€.</li>
-                                       <li><strong>Acción:</strong> De nuevo, recalcula todo. Como la previsión sube, el porcentaje de IRPF total también. Te retiene lo de marzo y ajusta lo que faltaba de enero y febrero. Por eso la retención de este mes es más alta.</li>
-                                   </ul>
-                               </li>
-                               <li><strong class="text-indigo-700">Mes 4 (Abril):</strong> Ganas 1.000€.
-                                    <ul class="list-disc list-inside pl-5 text-sm">
-                                       <li><strong>Previsión:</strong> Llevas 6.500€ en 4 meses. Promedio: 1.625€/mes. Nueva previsión anual: 19.500€.</li>
-                                       <li><strong>Acción:</strong> ¡La previsión baja! El sistema detecta que en los meses anteriores te ha retenido "de más" según esta nueva estimación. Por eso, en abril, tu retención será <strong>más baja de lo normal</strong> para equilibrar la balanza.</li>
-                                   </ul>
-                               </li>
-                           </ul>
-
-                           <div class="p-4 bg-green-50 rounded-lg border border-green-200 mt-4">
-                                <p class="font-semibold">¿Y si pido un porcentaje diferente al que existe en nómina?</p>
-                                <p>Puedes solicitar un porcentaje de IRPF superior al que te corresponde por ley (por ejemplo, un 16% si te sale un 10%). La empresa aplicará ese 16%. Sin embargo, nunca podrá retenerte menos de lo que marca la ley, aunque lo pidas. NO es un capricho, así lo establece la ley.</p>
-                           </div>
-                        </div>
-                    </div>
-                </div>
-
             </div>
+        </div>
+
+        <!-- SECCIÓN 3: PREGUNTAS FRECUENTES (BAJAS, GESTIONES...) -->
+        <div id="preguntas-frecuentes-gestiones" class="mt-10 bg-white rounded-2xl shadow-lg">
+             <button class="accordion-button w-full flex justify-between items-center text-left p-6 md:p-8 text-xl font-semibold text-gray-700 focus:outline-none">
+                <span>Preguntas Frecuentes: Bajas, Accidentes y Gestiones</span>
+                <span class="accordion-icon text-indigo-500 text-3xl font-light">+</span>
+            </button>
+            <div class="accordion-content">
+                <div class="px-6 md:px-8 pb-6 md:pb-8">
+                    <div class="space-y-6 pt-4 border-t">
+
+                        <div class="p-4 rounded-lg bg-gray-50 border">
+                            <h3 class="font-semibold text-lg text-indigo-600 mb-1">¿Qué debo hacer si estoy enfermo y no puedo ir a trabajar?</h3>
+                            <p class="text-gray-600">Lo más importante es la comunicación. Debes informar de tu ausencia a tu supervisor directo y al departamento de RRHH tan pronto como sea posible. La rapidez es clave para organizar el trabajo y gestionar tu situación correctamente.</p>
+                            <p class="text-gray-600 mt-2">Indica la fecha de inicio de tu ausencia y, si la conoces, la fecha posible de alta o de tu próxima revisión médica. Como trabajador, tienes la obligación de mantener a la empresa informada, aunque no es obligatorio que entregues el parte médico físico, sí debes comunicar los datos del mismo (fechas, tipo de baja, etc.).</p>
+                        </div>
+
+                        <div class="p-4 rounded-lg bg-gray-50 border">
+                            <h3 class="font-semibold text-lg text-indigo-600 mb-1">¿Qué es una baja médica y cómo se tramita?</h3>
+                            <p class="text-gray-600">Una baja médica, o Incapacidad Temporal (IT), es un subsidio diario que cubre la pérdida de rentas mientras no puedes trabajar por enfermedad o accidente. Para tramitarla, debes acudir a tu médico de cabecera (o al servicio de urgencias), quien evaluará tu estado y, si lo considera necesario, emitirá el parte de baja. Este documento oficial certifica tu incapacidad para trabajar.</p>
+                        </div>
+
+                        <div class="p-4 rounded-lg bg-gray-50 border">
+                            <h3 class="font-semibold text-lg text-indigo-600 mb-1">¿Se cobra estando de baja? ¿Cuánto?</h3>
+                            <div class="text-gray-600 space-y-2">
+                                <p>Sí, pero la cuantía varía según el tipo de baja y los días de duración. Para una <strong>baja por enfermedad común o accidente no laboral</strong>:</p>
+                                <ul class="list-disc list-inside ml-4">
+                                    <li><strong>Días 1 a 3:</strong> No se cobra nada, salvo que tu convenio colectivo establezca una mejora.</li>
+                                    <li><strong>Días 4 a 20:</strong> Cobrarás el 60% de tu base reguladora.</li>
+                                    <li><strong>A partir del día 21:</strong> Cobrarás el 75% de tu base reguladora.</li>
+                                </ul>
+                                <div class="p-3 bg-blue-50 border-l-4 border-blue-400 mt-2">
+                                    <p>La <strong>base reguladora</strong> es el resultado de dividir la base de cotización del mes anterior a la baja por 30 días (si tu salario es mensual).</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-lg bg-gray-50 border">
+                            <h3 class="font-semibold text-lg text-indigo-600 mb-1">¿Qué ocurre si tengo un accidente laboral?</h3>
+                            <p class="text-gray-600">En caso de un accidente de trabajo, debes notificarlo <strong>inmediatamente</strong> a tu supervisor y al departamento de Prevención de Riesgos Laborales (PRL). Ellos te indicarán los pasos a seguir y a qué mutua de accidentes debes dirigirte. Es fundamental seguir sus instrucciones para garantizar una correcta atención y gestión del accidente.</p>
+                        </div>
+                        
+                        <div class="p-4 rounded-lg bg-gray-50 border">
+                            <h3 class="font-semibold text-lg text-indigo-600 mb-1">¿Cuánto cobro por accidente laboral?</h3>
+                            <p class="text-gray-600">La prestación por accidente de trabajo es más favorable que por enfermedad común. Se cobra el <strong>75% de la base reguladora desde el día siguiente al de la baja</strong>. El día del accidente, la empresa te abonará el salario íntegro.</p>
+                        </div>
+
+                        <div class="p-4 rounded-lg bg-gray-50 border">
+                            <h3 class="font-semibold text-lg text-indigo-600 mb-1">¿Se puede solicitar anticipos de sueldo?</h3>
+                            <p class="text-gray-600">Sí, los anticipos de sueldo pueden solicitarse a través del portal de incidencias hasta el día 10 de cada mes, con un máximo de 300 €. La aprobación de estos anticipos estará condicionada a la aprobación por parte de RRHH.</p>
+                            <p class="text-gray-600 mt-2">Nos reservamos el derecho de denegar anticipos por motivos justificados que serán informados.</p>
+                        </div>
+
+                        <div class="p-4 rounded-lg bg-gray-50 border">
+                            <h3 class="font-semibold text-lg text-indigo-600 mb-1">¿Dónde accedo a mis nóminas, contrato o datos personales?</h3>
+                            <p class="text-gray-600">Toda tu documentación laboral importante está centralizada en el <strong>Portal del Empleado</strong>. Aquí puedes descargar tus nóminas, consultar tu contrato  y actualizar tus datos personales e IRPF.</p>
+                            <p class="text-gray-600 mt-3 font-semibold">Selecciona el portal de tu empresa para acceder:</p>
+                            <div class="mt-4 space-y-3">
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-white rounded-md border">
+                                    <span class="font-medium text-gray-700">Outsmart Assistance:</span>
+                                    <a href="https://portal.grupoalliance.com/Outsmart/webttipub/Candi/Candilogin.aspx" target="_blank" rel="noopener noreferrer" class="mt-2 sm:mt-0 inline-block bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition duration-300 shadow-sm text-sm text-center">Acceder al Portal</a>
+                                </div>
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-white rounded-md border">
+                                    <span class="font-medium text-gray-700">Alliance Outsourcing:</span>
+                                    <a href="#" target="_blank" rel="noopener noreferrer" class="mt-2 sm:mt-0 inline-block bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition duration-300 shadow-sm text-sm text-center">Acceder al Portal</a>
+                                </div>
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between p-3 bg-white rounded-md border">
+                                    <span class="font-medium text-gray-700">Alliance Control:</span>
+                                    <a href="#" target="_blank" rel="noopener noreferrer" class="mt-2 sm:mt-0 inline-block bg-indigo-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-indigo-700 transition duration-300 shadow-sm text-sm text-center">Acceder al Portal</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-lg bg-gray-50 border">
+                            <h3 class="font-semibold text-lg text-indigo-600 mb-1">¿Cómo notifico un cambio de domicilio, teléfono o cuenta bancaria?</h3>
+                            <p class="text-gray-600">Es muy importante mantener tus datos personales actualizados. Para notificar cualquier cambio (domicilio, número de teléfono, cuenta bancaria para el ingreso de la nómina, etc.), debes hacerlo a través del <strong>Portal de Incidencias</strong>. Esto asegura que la comunicación quede registrada y se procese correctamente.</p>
+                        </div>
+
+                        <div class="p-4 rounded-lg bg-gray-50 border">
+                            <h3 class="font-semibold text-lg text-indigo-600 mb-1">¿Cómo contacto con el departamento de RRHH?</h3>
+                            <p class="text-gray-600">La vía oficial para cualquier consulta, petición o incidencia con el departamento de Recursos Humanos es a través del <strong>Portal de Incidencias</strong>. Utilizar este canal garantiza que tu solicitud sea atendida y puedas hacer un seguimiento de la misma.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN 4: CALCULADORA -->
+        <div id="calculadora-salario" class="mt-10 bg-white rounded-2xl shadow-lg">
+              <!-- Botón del acordeón de la calculadora -->
+            <button class="accordion-button w-full flex justify-between items-center text-left p-6 md:p-8 text-xl font-semibold text-gray-700 focus:outline-none">
+                <span>Calcula tu salario neto aproximado <span class="text-base font-normal text-gray-500">(¡recuerda que esto es aproximado!)</span></span>
+                <span class="accordion-icon text-indigo-500 text-3xl font-light">+</span>
+            </button>
+            <!-- Contenido del acordeón de la calculadora -->
+            <div class="accordion-content">
+                <div class="px-6 md:px-8 pb-6 md:pb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4 border-t">
+                        <!-- Columna de Entradas -->
+                        <div class="space-y-6">
+                            <h2 class="text-2xl font-semibold text-gray-700">Introduce tus datos</h2>
+                            <div>
+                                <label for="salarioBruto" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Salario Bruto Anual (€)
+                                    <span class="tooltip text-indigo-500 cursor-pointer">(?)
+                                        <span class="tooltiptext text-left">Es el total de tus ingresos anuales antes de cualquier descuento. Incluye tu sueldo base, pagas extra y otros complementos.</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="salarioBruto" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="Ej: 25000" value="22000">
+                            </div>
+                            <div>
+                                <label for="situacionFamiliar" class="block text-sm font-medium text-gray-700 mb-1">Situación Familiar</label>
+                                <select id="situacionFamiliar" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                    <option value="3">Soltero/a, viudo/a, divorciado/a o separado/a legalmente</option>
+                                    <option value="2">Casado/a y cónyuge con rentas superiores a 1.500€</option>
+                                    <option value="1">Casado/a y cónyuge sin rentas o inferiores a 1.500€</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="hijos" class="block text-sm font-medium text-gray-700 mb-1">
+                                    Hijos menores de 25 años a cargo
+                                    <span class="tooltip text-indigo-500 cursor-pointer">(?)
+                                        <span class="tooltiptext text-left">Número de hijos que conviven contigo y no tienen rentas anuales superiores a 8.000€.</span>
+                                    </span>
+                                </label>
+                                <input type="number" id="hijos" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500" placeholder="0" value="0">
+                            </div>
+                            <div>
+                                <label for="pagas" class="block text-sm font-medium text-gray-700 mb-1">Número de Pagas</label>
+                                <select id="pagas" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                                    <option value="12">12 Pagas</option>
+                                    <option value="14" selected>14 Pagas</option>
+                                </select>
+                            </div>
+                             <button id="calculateButton" class="w-full bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-indigo-700 transition duration-300 shadow-md">Calcular Ahora</button>
+                        </div>
+                        <!-- Columna de Resultados -->
+                        <div class="bg-indigo-50 p-6 rounded-xl border border-indigo-200">
+                            <h2 class="text-2xl font-semibold text-indigo-800 border-b border-indigo-200 pb-2 mb-4">Tu resultado estimado</h2>
+                            <div class="space-y-4">
+                                <div class="flex justify-between items-center pb-2">
+                                    <span class="font-medium text-gray-600">Salario Bruto Mensual</span>
+                                    <span id="salarioBrutoMensual" class="text-lg font-semibold text-gray-700">0,00 €</span>
+                                </div>
+                                <div class="flex justify-between items-center pt-2 border-t">
+                                    <span class="font-medium text-gray-600">Retención de IRPF</span>
+                                    <span id="retencionPorcentaje" class="text-lg font-semibold text-red-600">0,00 %</span>
+                                </div>
+                                <div class="flex justify-between items-center">
+                                    <span class="font-medium text-gray-600">Cotización S. Social</span>
+                                    <span class="text-lg font-semibold text-red-600">6,45 %</span>
+                                </div>
+                                <div class="flex justify-between items-center pt-4 border-t-2 border-indigo-200">
+                                    <span class="font-bold text-gray-800">Salario Neto Mensual</span>
+                                    <span id="salarioNeto" class="text-2xl font-bold text-indigo-600">0,00 €</span>
+                                </div>
+                                <div class="text-right -mt-3"><span class="text-xs font-normal text-gray-500">(aproximado)</span></div>
+                                <div class="flex justify-between items-center mt-2">
+                                    <span class="font-medium text-gray-600">Salario Neto Anual</span>
+                                    <span id="salarioNetoAnual" class="text-lg font-semibold text-gray-700">0,00 €</span>
+                                </div>
+                                <div class="text-right -mt-3"><span class="text-xs font-normal text-gray-500">(aproximado)</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-8 text-center text-xs text-gray-500 bg-gray-100 p-3 rounded-lg">
+                        <p><span class="font-bold">AVISO IMPORTANTE:</span> Esta es una calculadora simplificada con fines ORIENTATIVOS. Los tramos estatales del IRPF pueden variar según tu Comunidad Autónoma. El cálculo real de la Agencia Tributaria puede diferir. Esto no constituye asesoramiento fiscal. Recuerda mantener siempre actualizado a través del formulario 145, tus datos personales. Pregunta a RRHH por cualquier duda (a través del portal)</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SECCIÓN FINAL: ACCESO AL PORTAL DE INCIDENCIAS -->
+        <div class="text-center mt-10">
+            <p class="mb-3 text-gray-600">Si sigues teniendo dudas, contacta con el departamento de RRHH.</p>
+            <a href="#" target="_blank" rel="noopener noreferrer" class="inline-block bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg hover:bg-indigo-800 transition duration-300 shadow-md text-center">
+                Acceso al Portal de Incidencias
+            </a>
         </div>
 
     </div>
 
     <script>
-        // --- Elementos del DOM ---
-        const salarioBrutoInput = document.getElementById('salarioBruto');
-        const situacionFamiliarSelect = document.getElementById('situacionFamiliar');
-        const hijosInput = document.getElementById('hijos');
-        const pagasSelect = document.getElementById('pagas');
-        const comunidadAutonomaSelect = document.getElementById('comunidadAutonoma');
+        document.addEventListener('DOMContentLoaded', function () {
+            // --- LÓGICA DE LA CALCULADORA MEJORADA ---
 
-        const salarioNetoDisplay = document.getElementById('salarioNeto');
-        const salarioNetoAnualDisplay = document.getElementById('salarioNetoAnual');
-        const retencionPorcentajeDisplay = document.getElementById('retencionPorcentaje');
+            const salarioBrutoInput = document.getElementById('salarioBruto');
+            const hijosInput = document.getElementById('hijos');
+            const pagasInput = document.getElementById('pagas');
+            const situacionFamiliarInput = document.getElementById('situacionFamiliar');
+            const calculateButton = document.getElementById('calculateButton');
 
-        const resumenBrutoDisplay = document.getElementById('resumenBruto');
-        const resumenSSDisplay = document.getElementById('resumenSS');
-        const resumenIRPFDisplay = document.getElementById('resumenIRPF');
-        const resumenNetoAnualDisplay = document.getElementById('resumenNetoAnual');
+            const salarioBrutoMensualEl = document.getElementById('salarioBrutoMensual');
+            const retencionPorcentajeEl = document.getElementById('retencionPorcentaje');
+            const salarioNetoEl = document.getElementById('salarioNeto');
+            const salarioNetoAnualEl = document.getElementById('salarioNetoAnual');
 
-        // --- Datos de tramos autonómicos 2024 ---
-        const tramosAutonomicos = {
-            estatal: [],
-            madrid: [
-                { limite: 0, tipo: 0.09 }, { limite: 12450, tipo: 0.115 },
-                { limite: 17707.20, tipo: 0.15 }, { limite: 20200, tipo: 0.184 },
-                { limite: 35200, tipo: 0.234 }, { limite: 60000, tipo: 0.254 }
-            ],
-            cataluna: [
-                { limite: 0, tipo: 0.12 }, { limite: 12450, tipo: 0.14 },
-                { limite: 17707.20, tipo: 0.185 }, { limite: 20200, tipo: 0.212 },
-                { limite: 35200, tipo: 0.237 }, { limite: 60000, tipo: 0.255 },
-                { limite: 120000, tipo: 0.26 }
-            ],
-            andalucia: [
-                { limite: 0, tipo: 0.096 }, { limite: 12450, tipo: 0.12 },
-                { limite: 20200, tipo: 0.15 }, { limite: 35200, tipo: 0.185 },
-                { limite: 60000, tipo: 0.225 }, { limite: 130000, tipo: 0.245 }
-            ],
-            valencia: [
-                { limite: 0, tipo: 0.099 }, { limite: 12450, tipo: 0.12 },
-                { limite: 20200, tipo: 0.14 }, { limite: 35200, tipo: 0.185 },
-                { limite: 60000, tipo: 0.221 }
-            ],
-            galicia: [
-                { limite: 0, tipo: 0.091 }, { limite: 12450, tipo: 0.119 },
-                { limite: 20200, tipo: 0.15 }, { limite: 35200, tipo: 0.185 },
-                { limite: 60000, tipo: 0.225 }
-            ],
-            paisvasco: [
-                { limite: 0, tipo: 0.09 }, { limite: 13500, tipo: 0.12 },
-                { limite: 21000, tipo: 0.15 }, { limite: 37000, tipo: 0.196 },
-                { limite: 53500, tipo: 0.225 }
-            ],
-            castillaleon: [
-                { limite: 0, tipo: 0.095 }, { limite: 12450, tipo: 0.12 },
-                { limite: 20200, tipo: 0.15 }, { limite: 35200, tipo: 0.185 },
-                { limite: 60000, tipo: 0.225 }
-            ]
-        };
+            const COTIZACION_SS = 0.0645; // 6.45%
+            const GASTOS_DEDUCIBLES = 2000; // Gastos generales deducibles fijos
 
-        // --- Lógica de cálculo ---
-        function calcularIRPF() {
-            try {
-                // 1. VALIDAR Y OBTENER VALORES DE ENTRADA
-                let salarioBruto = parseFloat(salarioBrutoInput.value) || 0;
+            // Tramos IRPF 2025 (Estatales)
+            const TRAMOS_IRPF = [
+                { limite: 12450, tipo: 0.19 },
+                { limite: 20200, tipo: 0.24 },
+                { limite: 35200, tipo: 0.30 },
+                { limite: 60000, tipo: 0.37 },
+                { limite: 300000, tipo: 0.45 },
+                { limite: Infinity, tipo: 0.47 },
+            ];
 
-                // Validación de salario
-                if (salarioBruto < 0) salarioBruto = 0;
-                if (salarioBruto > 1000000) salarioBruto = 1000000;
-                salarioBruto = Math.round(salarioBruto * 100) / 100;
+            // Mínimos por descendientes
+            const MINIMO_DESCENDIENTES = [2400, 2700, 4000, 4500];
+            const MINIMO_CONYUGE = 3400;
 
-                const situacionFamiliar = situacionFamiliarSelect.value;
-                let numeroHijos = parseInt(hijosInput.value) || 0;
-                if (numeroHijos < 0) numeroHijos = 0;
-                if (numeroHijos > 20) numeroHijos = 20;
+            function formatCurrency(value) {
+                return value.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
+            }
 
-                const numeroPagas = parseInt(pagasSelect.value) || 12;
-                const comunidadAutonoma = comunidadAutonomaSelect.value;
+            function calculate() {
+                const salarioBruto = parseFloat(salarioBrutoInput.value) || 0;
+                const numHijos = parseInt(hijosInput.value) || 0;
+                const numPagas = parseInt(pagasInput.value) || 12;
+                const situacionFamiliar = parseInt(situacionFamiliarInput.value, 10) || 3;
 
                 if (salarioBruto <= 0) {
-                    actualizarResultados(0, 0, 0, 0, 0, 0);
+                     salarioBrutoMensualEl.textContent = formatCurrency(0);
+                     retencionPorcentajeEl.textContent = `0,00 %`;
+                     salarioNetoEl.textContent = formatCurrency(0);
+                     salarioNetoAnualEl.textContent = formatCurrency(0);
                     return;
                 }
 
-                // 2. CÁLCULO DE COTIZACIONES A LA SEGURIDAD SOCIAL 2024
-                // Contingencias comunes: 4.7%, Desempleo: 1.55%, Formación: 0.10% = 6.35%
-                const tipoCotizacionSS = 0.0635;
-                const baseCotizacionMax = 56646; // Tope máximo anual 2024
-                const baseCotizacionMin = 15876; // Base mínima anual 2024
-                let baseCotizacion = salarioBruto;
-                if (baseCotizacion < baseCotizacionMin) baseCotizacion = baseCotizacionMin;
-                if (baseCotizacion > baseCotizacionMax) baseCotizacion = baseCotizacionMax;
-                const cotizacionSS = baseCotizacion * tipoCotizacionSS;
+                // 1. Calcular Base Imponible (restando cotización y gastos)
+                const cotizacionAnual = salarioBruto * COTIZACION_SS;
+                let baseImponible = salarioBruto - cotizacionAnual - GASTOS_DEDUCIBLES;
+                
+                 // Reducción adicional para rentas bajas (hasta 16.825€ de rendimiento neto)
+                if (baseImponible <= 13115) {
+                    baseImponible -= 5565;
+                } else if (baseImponible < 16825) {
+                    baseImponible -= (5565 - 1.5 * (baseImponible - 13115));
+                }
+                
+                if (baseImponible < 0) baseImponible = 0;
 
-                // 3. GASTOS DEDUCIBLES POR OBTENCIÓN DE RENDIMIENTOS DEL TRABAJO (2024)
-                const rendimientoNeto = salarioBruto - cotizacionSS;
-                let gastosDeducibles = 0;
-
-                if (rendimientoNeto <= 14047.50) {
-                    gastosDeducibles = 5565;
-                } else if (rendimientoNeto < 19747.50) {
-                    // Reducción gradual
-                    gastosDeducibles = 5565 - ((rendimientoNeto - 14047.50) * 1.5);
-                    if (gastosDeducibles < 0) gastosDeducibles = 0;
-                } else {
-                    gastosDeducibles = 0;
+                // 2. Calcular Mínimo Personal y Familiar
+                let minimoPersonalFamiliar = 5550; // Mínimo general
+                if (situacionFamiliar === 1) {
+                    minimoPersonalFamiliar += MINIMO_CONYUGE;
+                }
+                if (numHijos > 0) {
+                    for (let i = 0; i < numHijos; i++) {
+                        minimoPersonalFamiliar += MINIMO_DESCENDIENTES[Math.min(i, MINIMO_DESCENDIENTES.length - 1)];
+                    }
+                }
+                
+                // 3. Calcular Base Liquidable (lo que realmente se grava)
+                let baseLiquidable = baseImponible - minimoPersonalFamiliar;
+                if (baseLiquidable < 0) {
+                    baseLiquidable = 0;
                 }
 
-                // 4. BASE SUJETA A RETENCIÓN
-                let baseSujetaARetencion = rendimientoNeto - gastosDeducibles;
-                if (baseSujetaARetencion < 0) baseSujetaARetencion = 0;
+                // 4. Calcular Cuota Íntegra (aplicando tramos progresivamente)
+                let cuotaIntegra = 0;
+                let baseRestante = baseLiquidable;
+                let limiteAnterior = 0;
 
-                // 5. MÍNIMO PERSONAL Y FAMILIAR (2024)
-                let minimoPersonal = 5550;
-
-                // Mínimo por descendientes
-                let minimoFamiliar = 0;
-                if (numeroHijos >= 1) minimoFamiliar += 2400;
-                if (numeroHijos >= 2) minimoFamiliar += 2700;
-                if (numeroHijos >= 3) minimoFamiliar += 4000;
-                if (numeroHijos >= 4) minimoFamiliar += 4500 * (numeroHijos - 3);
-
-                const minimoTotal = minimoPersonal + minimoFamiliar;
-
-                // 6. CÁLCULO DE LA CUOTA ÍNTEGRA
-                const calcularCuota = (base, comunidad) => {
-                    // Tramos estatales (50%)
-                    const tramosEstatal = [
-                        { limite: 0, tipo: 0.095 }, { limite: 12450, tipo: 0.12 },
-                        { limite: 20200, tipo: 0.15 }, { limite: 35200, tipo: 0.185 },
-                        { limite: 60000, tipo: 0.225 }, { limite: 300000, tipo: 0.235 }
-                    ];
-
-                    let cuotaEstatal = 0;
-                    let baseRestante = base;
-
-                    for (let i = tramosEstatal.length - 1; i >= 0; i--) {
-                        if (baseRestante > tramosEstatal[i].limite) {
-                            cuotaEstatal += (baseRestante - tramosEstatal[i].limite) * tramosEstatal[i].tipo;
-                            baseRestante = tramosEstatal[i].limite;
-                        }
+                for (const tramo of TRAMOS_IRPF) {
+                    if (baseRestante > 0) {
+                        const baseEnTramo = Math.min(baseRestante, tramo.limite - limiteAnterior);
+                        cuotaIntegra += baseEnTramo * tramo.tipo;
+                        baseRestante -= baseEnTramo;
+                        limiteAnterior = tramo.limite;
+                    } else {
+                        break;
                     }
+                }
 
-                    // Tramos autonómicos (50%)
-                    let cuotaAutonomica = 0;
-                    const tramosAuto = tramosAutonomicos[comunidad] || [];
-                    baseRestante = base;
+                // 5. Calcular Porcentaje de Retención Final
+                let retencionPorcentaje = (cuotaIntegra / salarioBruto) * 100;
+                
+                // Mínimo exento de retención general (simplificado)
+                 if (salarioBruto <= 15000) {
+                    retencionPorcentaje = 0;
+                 }
+                
+                if (retencionPorcentaje < 0) retencionPorcentaje = 0;
 
-                    for (let i = tramosAuto.length - 1; i >= 0; i--) {
-                        if (baseRestante > tramosAuto[i].limite) {
-                            cuotaAutonomica += (baseRestante - tramosAuto[i].limite) * tramosAuto[i].tipo;
-                            baseRestante = tramosAuto[i].limite;
-                        }
-                    }
 
-                    return cuotaEstatal + cuotaAutonomica;
-                };
+                // 6. Calcular Salarios Netos
+                const retencionAnual = salarioBruto * (retencionPorcentaje / 100);
+                const salarioNetoAnual = salarioBruto - retencionAnual - cotizacionAnual;
+                const salarioNetoMensual = salarioNetoAnual / numPagas;
+                const salarioBrutoMensual = salarioBruto / numPagas;
 
-                const cuotaBaseImponible = calcularCuota(baseSujetaARetencion, comunidadAutonoma);
-                const cuotaMinimo = calcularCuota(minimoTotal, comunidadAutonoma);
-
-                // 7. RESULTADOS FINALES
-                let retencionIRPF = cuotaBaseImponible - cuotaMinimo;
-                if (retencionIRPF < 0) retencionIRPF = 0;
-
-                const salarioNetoAnual = salarioBruto - cotizacionSS - retencionIRPF;
-                const salarioNetoMensual = salarioNetoAnual / numeroPagas;
-                const porcentajeRetencion = salarioBruto > 0 ? (retencionIRPF / salarioBruto) * 100 : 0;
-
-                actualizarResultados(salarioNetoMensual, salarioNetoAnual, porcentajeRetencion, salarioBruto, cotizacionSS, retencionIRPF);
-            } catch (error) {
-                console.error('Error en el cálculo de IRPF:', error);
-                actualizarResultados(0, 0, 0, 0, 0, 0);
-                alert('Ha ocurrido un error en el cálculo. Por favor, verifica los datos introducidos.');
+                // 7. Actualizar la interfaz
+                salarioBrutoMensualEl.textContent = formatCurrency(salarioBrutoMensual);
+                retencionPorcentajeEl.textContent = `${retencionPorcentaje.toFixed(2).replace('.', ',')} %`;
+                salarioNetoEl.textContent = formatCurrency(salarioNetoMensual);
+                salarioNetoAnualEl.textContent = formatCurrency(salarioNetoAnual);
             }
-        }
 
-        function actualizarResultados(netoMes, netoAnual, porcRet, bruto, ss, irpf) {
-            const formatCurrency = (value) => value.toLocaleString('es-ES', { style: 'currency', currency: 'EUR' });
+            calculateButton.addEventListener('click', calculate);
             
-            salarioNetoDisplay.textContent = formatCurrency(netoMes);
-            salarioNetoAnualDisplay.textContent = formatCurrency(netoAnual);
-            retencionPorcentajeDisplay.textContent = `${porcRet.toFixed(2).replace('.', ',')} %`;
+            // Recalcular si se cambia cualquier valor
+            salarioBrutoInput.addEventListener('input', calculate);
+            hijosInput.addEventListener('input', calculate);
+            pagasInput.addEventListener('change', calculate);
+            situacionFamiliarInput.addEventListener('change', calculate);
 
-            resumenBrutoDisplay.textContent = formatCurrency(bruto);
-            resumenSSDisplay.textContent = `- ${formatCurrency(ss)}`;
-            resumenIRPFDisplay.textContent = `- ${formatCurrency(irpf)}`;
-            resumenNetoAnualDisplay.textContent = formatCurrency(netoAnual);
-        }
 
-        // --- Lógica del Acordeón (MEJORADA) ---
-        document.querySelectorAll('.accordion-button').forEach(button => {
-            button.addEventListener('click', () => {
-                const accordionContent = button.nextElementSibling;
-                const isOpen = button.classList.contains('open');
+            // --- LÓGICA PARA LOS ACORDEONES ---
+            const accordionButtons = document.querySelectorAll('.accordion-button');
 
+            function toggleAccordion(button) {
+                const content = button.nextElementSibling;
                 button.classList.toggle('open');
-
-                if (!isOpen) {
-                    // Abrir acordeón
-                    accordionContent.style.maxHeight = accordionContent.scrollHeight + 'px';
-                    button.setAttribute('aria-expanded', 'true');
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
                 } else {
-                    // Cerrar acordeón
-                    accordionContent.style.maxHeight = '0';
-                    button.setAttribute('aria-expanded', 'false');
+                    content.style.maxHeight = content.scrollHeight + "px";
                 }
+            }
+
+            accordionButtons.forEach(button => {
+                button.addEventListener('click', () => toggleAccordion(button));
             });
+
+            // Calcular al cargar la página con los valores por defecto
+            calculate();
         });
-        
-        // --- Event Listeners para recálculo automático ---
-        salarioBrutoInput.addEventListener('input', calcularIRPF);
-        situacionFamiliarSelect.addEventListener('change', calcularIRPF);
-        hijosInput.addEventListener('input', calcularIRPF);
-        pagasSelect.addEventListener('change', calcularIRPF);
-        comunidadAutonomaSelect.addEventListener('change', calcularIRPF);
-
-        // --- Cálculo inicial al cargar la página ---
-        window.addEventListener('load', calcularIRPF);
-
     </script>
+
 </body>
 </html>
+
